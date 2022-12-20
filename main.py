@@ -2,6 +2,7 @@ import pandas as pd
 from glob import glob
 import datetime
 from random import choice
+import smtplib
 # 1. Update the birthdays.csv
 
 # 2. Check if today matches a birthday in the birthdays.csv
@@ -21,5 +22,14 @@ if is_someones_birthday:
         birthday_name = someones_birthday_row["name"].item()
         letter_to_send = template_text.replace("[NAME]", birthday_name)
         print(letter_to_send)
+    my_email = "100days1047@gmail.com"
+    password = "cwlivsquszphscpw"
+    with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
+        connection.starttls()
+        connection.login(user=my_email, password=password)
+        connection.sendmail(from_addr=my_email,
+                            to_addrs=someones_birthday_row["email"].item(),
+                            msg=f"Subject:Happy Birthday\n\n"
+                                f"{letter_to_send}")
 
 # 4. Send the letter generated in step 3 to that person's email address.
