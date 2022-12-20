@@ -1,19 +1,25 @@
 import pandas as pd
 from glob import glob
+import datetime
+from random import choice
 # 1. Update the birthdays.csv
 
 # 2. Check if today matches a birthday in the birthdays.csv
+today = datetime.date(year=datetime.date.today().year,
+                      month=11,
+                      day=9)
 birthday_df = pd.read_csv("birthdays.csv")
-someones_birthday_row = birthday_df[(birthday_df["month"] == 5) & (birthday_df["day"] == 23)]
+someones_birthday_row = birthday_df[(birthday_df["month"] == today.month) & (birthday_df["day"] == today.day)]
 is_someones_birthday = bool(someones_birthday_row.size)
-# birthday_month = someones_birthday_row["month"].item()
-# birthday_day = someones_birthday_row["day"].item()
-# print(f"{birthday_month} {birthday_day}")
-print(f"Is someone's birthday?\n{is_someones_birthday}")
-all_letter_templates = [file_path for file_path in glob("./letter_templates/*")]
-print(all_letter_templates)
-
-# 3. If step 2 is true, pick a random letter from letter templates and replace the [NAME] with the person's
-# actual name from birthdays.csv
+if is_someones_birthday:
+    # 3. If step 2 is true, pick a random letter from letter templates and replace the [NAME] with the person's
+    # actual name from birthdays.csv
+    all_letter_templates = [file_path for file_path in glob("./letter_templates/*")]
+    chosen_template = choice(all_letter_templates)
+    with open(chosen_template, "r") as template:
+        template_text = template.read()
+        birthday_name = someones_birthday_row["name"].item()
+        letter_to_send = template_text.replace("[NAME]", birthday_name)
+        print(letter_to_send)
 
 # 4. Send the letter generated in step 3 to that person's email address.
